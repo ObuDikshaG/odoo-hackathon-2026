@@ -6,6 +6,7 @@ export function Sidebar() {
     { name: "Dashboard", icon: LayoutDashboard, href: "/" },
     { name: "Organization Setup", icon: Building2, href: "/organization-setup" },
     { name: "Assets", icon: Package, href: "/assets" },
+    { name: "Asset Allocation", icon: Package, href: "/allocation" },
     { name: "Booking", icon: CalendarDays, href: "/booking" },
     { name: "Maintenance", icon: Wrench, href: "/maintenance" },
     { name: "Audit", icon: FileCheck, href: "/audit" },
