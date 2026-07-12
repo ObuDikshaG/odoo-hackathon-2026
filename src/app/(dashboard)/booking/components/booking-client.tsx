@@ -11,6 +11,7 @@ import { BookingDialogs } from "./booking-dialogs";
 import { getStoredBookings, saveBookings, generateNextBookingId, Booking, BookingStatus } from "@/lib/data/bookingStore";
 import { getStoredAssets, Asset } from "@/lib/data/assetStore";
 import { mockEmployees } from "@/lib/data/mock";
+import { logEvent } from "@/lib/data/eventLogger";
 import { CalendarRange, PlusCircle, History, LayoutGrid } from "lucide-react";
 
 export function BookingClient() {
@@ -69,6 +70,20 @@ export function BookingClient() {
     };
 
     handleSaveBookings([...bookings, newBooking]);
+
+    logEvent({
+      module: "Booking",
+      action: "Create Booking",
+      assetId: newBooking.assetId,
+      performedById: newBooking.bookedById,
+      performedByName: mockEmployees.find((e) => e.id === newBooking.bookedById)?.name || "Employee",
+      description: `Booking request ${newBooking.id} created for purpose: ${newBooking.purpose}.`,
+      details: { bookingId: newBooking.id, startDate: newBooking.startDate, endDate: newBooking.endDate },
+      createNotification: true,
+      notificationTitle: "New Booking Created",
+      notificationPriority: "Low"
+    });
+
     setIsCreateOpen(false);
   };
 
@@ -96,6 +111,23 @@ export function BookingClient() {
     });
 
     handleSaveBookings(updated);
+
+    const b = bookings.find((bk) => bk.id === id);
+    if (b) {
+      logEvent({
+        module: "Booking",
+        action: "Update Booking",
+        assetId: b.assetId,
+        performedById: b.bookedById,
+        performedByName: mockEmployees.find((e) => e.id === b.bookedById)?.name || "Employee",
+        description: `Booking request ${b.id} details updated.`,
+        details: { bookingId: b.id, purpose: data.purpose, startDate: data.startDate, endDate: data.endDate },
+        createNotification: true,
+        notificationTitle: "Booking Updated",
+        notificationPriority: "Low"
+      });
+    }
+
     setIsEditOpen(false);
     setSelectedBooking(null);
   };
@@ -135,6 +167,22 @@ export function BookingClient() {
     });
 
     handleSaveBookings(updated);
+
+    const targetBooking = bookings.find((b) => b.id === id);
+    if (targetBooking) {
+      logEvent({
+        module: "Booking",
+        action: newStatus,
+        assetId: targetBooking.assetId,
+        performedById: targetBooking.bookedById,
+        performedByName: mockEmployees.find((e) => e.id === targetBooking.bookedById)?.name || "Employee",
+        description: `Booking ${targetBooking.id} status changed from ${targetBooking.status} to ${newStatus}.`,
+        details: { bookingId: targetBooking.id, oldStatus: targetBooking.status, newStatus, date: data?.date, notes: data?.notes },
+        createNotification: true,
+        notificationTitle: `Booking Status: ${newStatus}`,
+        notificationPriority: newStatus === "Cancelled" ? "Medium" : "Low"
+      });
+    }
 
     // Close corresponding modal
     setIsConfirmOpen(false);

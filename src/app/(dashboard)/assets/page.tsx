@@ -68,6 +68,7 @@ import {
 
 import { mockCategories, mockDepartments } from "@/lib/data/mock";
 import { Asset, AssetStatus, getStoredAssets, saveAssets, generateNextAssetTag } from "@/lib/data/assetStore";
+import { logEvent } from "@/lib/data/eventLogger";
 
 export default function AssetsPage() {
 
@@ -192,6 +193,19 @@ export default function AssetsPage() {
 
     const updatedAssets = [...assets, newAsset];
     handleSaveAssets(updatedAssets);
+
+    logEvent({
+      module: "Asset",
+      action: "Register",
+      assetId: newAsset.id,
+      performedById: "admin",
+      performedByName: "System Admin",
+      description: `Asset ${newAsset.tag} (${newAsset.name}) registered in inventory.`,
+      details: { categoryId: newAsset.categoryId, location: newAsset.location, status: newAsset.status },
+      createNotification: true,
+      notificationTitle: "New Asset Registered",
+      notificationPriority: "Low"
+    });
     
     // Reset Form & Close
     setFormData({
@@ -217,6 +231,19 @@ export default function AssetsPage() {
       a.id === assetToTransition.id ? { ...a, status: "Retired" as const } : a
     );
     handleSaveAssets(updated);
+
+    logEvent({
+      module: "Asset",
+      action: "Retire",
+      assetId: assetToTransition.id,
+      performedById: "admin",
+      performedByName: "System Admin",
+      description: `Asset ${assetToTransition.tag} (${assetToTransition.name}) retired from inventory.`,
+      details: { status: "Retired" },
+      createNotification: true,
+      notificationTitle: "Asset Retired",
+      notificationPriority: "Medium"
+    });
     
     // Update active details panel if open
     if (selectedAsset?.id === assetToTransition.id) {
@@ -238,6 +265,19 @@ export default function AssetsPage() {
       a.id === assetToTransition.id ? { ...a, status: "Disposed" as const } : a
     );
     handleSaveAssets(updated);
+
+    logEvent({
+      module: "Asset",
+      action: "Dispose",
+      assetId: assetToTransition.id,
+      performedById: "admin",
+      performedByName: "System Admin",
+      description: `Asset ${assetToTransition.tag} (${assetToTransition.name}) marked as Disposed.`,
+      details: { status: "Disposed" },
+      createNotification: true,
+      notificationTitle: "Asset Disposed",
+      notificationPriority: "High"
+    });
     
     // Update active details panel if open
     if (selectedAsset?.id === assetToTransition.id) {

@@ -8,6 +8,7 @@ import { AllocationTable } from "./allocation-table";
 import { AllocationDialogs } from "./allocation-dialogs";
 import { Allocation, getStoredAllocations, saveAllocations } from "@/lib/data/allocationStore";
 import { Asset, getStoredAssets, saveAssets } from "@/lib/data/assetStore";
+import { logEvent } from "@/lib/data/eventLogger";
 
 export function AllocationClient() {
   // Global States (lazy initialization to avoid setState-in-effect issues)
@@ -63,6 +64,20 @@ export function AllocationClient() {
       a.id === newAllocation.assetId ? { ...a, status: "Allocated" as const } : a
     );
     handleSaveAssets(updatedAssets);
+
+    logEvent({
+      module: "Allocation",
+      action: "Allocate",
+      assetId: newAllocation.assetId,
+      performedById: "admin",
+      performedByName: "System Admin",
+      description: `Asset allocated to ${newAllocation.employeeId ? `Employee (ID: ${newAllocation.employeeId})` : `Department (ID: ${newAllocation.departmentId})`}.`,
+      details: { allocationId: newAllocation.id, target: newAllocation.employeeId || newAllocation.departmentId, notes: newAllocation.notes },
+      createNotification: true,
+      notificationTitle: "Asset Allocated",
+      notificationPriority: "Low"
+    });
+
     setIsAllocateOpen(false);
   };
 
@@ -96,6 +111,19 @@ export function AllocationClient() {
       a.id === newAllocation.assetId ? { ...a, status: "Allocated" as const } : a
     );
     handleSaveAssets(updatedAssets);
+
+    logEvent({
+      module: "Allocation",
+      action: "Transfer",
+      assetId: newAllocation.assetId,
+      performedById: "admin",
+      performedByName: "System Admin",
+      description: `Asset allocation transferred to ${newAllocation.employeeId ? `Employee (ID: ${newAllocation.employeeId})` : `Department (ID: ${newAllocation.departmentId})`}.`,
+      details: { oldAllocationId: selectedAllocation.id, newAllocationId: newAllocation.id, target: newAllocation.employeeId || newAllocation.departmentId, notes: newAllocation.notes },
+      createNotification: true,
+      notificationTitle: "Asset Allocation Transferred",
+      notificationPriority: "Low"
+    });
     
     setIsTransferOpen(false);
     setSelectedAllocation(null);
@@ -122,6 +150,19 @@ export function AllocationClient() {
       a.id === returnedAllocation.assetId ? { ...a, status: "Available" as const } : a
     );
     handleSaveAssets(updatedAssets);
+
+    logEvent({
+      module: "Allocation",
+      action: "Return",
+      assetId: returnedAllocation.assetId,
+      performedById: "admin",
+      performedByName: "System Admin",
+      description: `Asset returned from allocation (ID: ${returnedAllocation.id}).`,
+      details: { allocationId: returnedAllocation.id, returnDate: returnedAllocation.returnDate, notes: returnedAllocation.notes },
+      createNotification: true,
+      notificationTitle: "Asset Returned",
+      notificationPriority: "Low"
+    });
     
     setIsReturnOpen(false);
     setSelectedAllocation(null);

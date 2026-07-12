@@ -11,6 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { getStoredMaintenanceRequests, saveMaintenanceRequests, MaintenanceRequest, MaintenancePriority, MaintenanceType, MaintenanceStatus } from "@/lib/data/maintenanceStore";
 import { getStoredAssets, saveAssets, Asset } from "@/lib/data/assetStore";
+import { logEvent } from "@/lib/data/eventLogger";
 import { PlusCircle, Calendar, Wrench, ShieldCheck, PlayCircle } from "lucide-react";
 
 export function MaintenanceClient() {
@@ -75,6 +76,20 @@ export function MaintenanceClient() {
     };
 
     handleSaveRequests([...requests, newRequest]);
+
+    logEvent({
+      module: "Maintenance",
+      action: "Create Request",
+      assetId: newRequest.assetId,
+      performedById: "admin",
+      performedByName: "System Admin",
+      description: `Maintenance request ${newRequest.id} (${newRequest.title}) created.`,
+      details: { requestId: newRequest.id, priority: newRequest.priority, type: newRequest.type },
+      createNotification: true,
+      notificationTitle: "New Maintenance Request",
+      notificationPriority: newRequest.priority === "Critical" ? "Critical" : newRequest.priority === "High" ? "High" : "Low"
+    });
+
     setIsCreateOpen(false);
   };
 
@@ -124,6 +139,19 @@ export function MaintenanceClient() {
       handleSaveAssets(updatedAssets);
     }
 
+    logEvent({
+      module: "Maintenance",
+      action: "Update Request",
+      assetId: updatedRequest.assetId,
+      performedById: "admin",
+      performedByName: "System Admin",
+      description: `Maintenance request ${updatedRequest.id} status updated to ${updatedRequest.status}.`,
+      details: { requestId: updatedRequest.id, status: updatedRequest.status, priority: updatedRequest.priority },
+      createNotification: true,
+      notificationTitle: "Maintenance Status Updated",
+      notificationPriority: updatedRequest.status === "Completed" ? "Low" : "Medium"
+    });
+
     setIsEditOpen(false);
     setSelectedRequest(null);
   };
@@ -160,6 +188,19 @@ export function MaintenanceClient() {
     );
     handleSaveAssets(updatedAssets);
 
+    logEvent({
+      module: "Maintenance",
+      action: "Complete",
+      assetId: updatedRequest.assetId,
+      performedById: "admin",
+      performedByName: "System Admin",
+      description: `Maintenance request ${updatedRequest.id} completed. Service Cost: $${updatedRequest.cost}.`,
+      details: { requestId: updatedRequest.id, cost: updatedRequest.cost, completionDate: updatedRequest.completionDate, notes: updatedRequest.notes },
+      createNotification: true,
+      notificationTitle: "Maintenance Request Completed",
+      notificationPriority: "Low"
+    });
+
     setIsCloseOpen(false);
     setSelectedRequest(null);
   };
@@ -175,6 +216,19 @@ export function MaintenanceClient() {
       a.id === request.assetId ? { ...a, status: "Under Maintenance" as const } : a
     );
     handleSaveAssets(updatedAssets);
+
+    logEvent({
+      module: "Maintenance",
+      action: "Start Progress",
+      assetId: request.assetId,
+      performedById: "admin",
+      performedByName: "System Admin",
+      description: `Maintenance request ${request.id} started. Asset state set to Under Maintenance.`,
+      details: { requestId: request.id, status: "In Progress" },
+      createNotification: true,
+      notificationTitle: "Maintenance In Progress",
+      notificationPriority: "Low"
+    });
   };
 
   // --- Filtering Logic ---
