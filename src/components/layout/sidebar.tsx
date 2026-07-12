@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { LayoutDashboard, Package, CalendarDays, Wrench, FileCheck, FileText, Bell } from "lucide-react";
+import { LayoutDashboard, Package, CalendarDays, Wrench, FileCheck, FileText, Bell, Building2 } from "lucide-react";
 
 export function Sidebar() {
   const routes = [
     { name: "Dashboard", icon: LayoutDashboard, href: "/" },
+    { name: "Organization Setup", icon: Building2, href: "/organization-setup" },
     { name: "Assets", icon: Package, href: "/assets" },
     { name: "Booking", icon: CalendarDays, href: "/booking" },
     { name: "Maintenance", icon: Wrench, href: "/maintenance" },
