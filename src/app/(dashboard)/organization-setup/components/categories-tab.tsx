@@ -17,6 +17,10 @@ interface CategoriesTabProps {
   setCategories: (categories: AssetCategory[]) => void;
 }
 
+function generateCategoryId() {
+  return `c-${Math.random().toString(36).substr(2, 9)}`;
+}
+
 export function CategoriesTab({ categories, setCategories }: CategoriesTabProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
@@ -57,7 +61,7 @@ export function CategoriesTab({ categories, setCategories }: CategoriesTabProps)
     if (formData.id) {
       setCategories(categories.map(c => c.id === formData.id ? { ...c, ...formData } as AssetCategory : c));
     } else {
-      const newId = `c${crypto.randomUUID()}`;
+      const newId = generateCategoryId();
       setCategories([...categories, { ...formData, id: newId } as AssetCategory]);
     }
     setIsDialogOpen(false);
@@ -116,18 +120,21 @@ export function CategoriesTab({ categories, setCategories }: CategoriesTabProps)
     }
   };
 
-  const filteredAndSortedCategories = categories
+  const filteredAndSortedCategories = [...categories]
     .filter((cat) => cat.name.toLowerCase().includes(searchQuery.toLowerCase()))
     .sort((a, b) => {
       if (!sortField) return 0;
-      let valA: string | number = a[sortField] as string | number;
-      let valB: string | number = b[sortField] as string | number;
-
-      if (sortField === "customFields") {
+      let valA: string | number = "";
+      let valB: string | number = "";
+ 
+      if (sortField === "name") {
+        valA = a.name;
+        valB = b.name;
+      } else if (sortField === "customFields") {
         valA = a.customFields.length;
         valB = b.customFields.length;
       }
-
+ 
       if (valA < valB) return sortDirection === "asc" ? -1 : 1;
       if (valA > valB) return sortDirection === "asc" ? 1 : -1;
       return 0;

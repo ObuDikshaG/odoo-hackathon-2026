@@ -19,6 +19,10 @@ interface DepartmentsTabProps {
   employees: Employee[];
 }
 
+function generateDepartmentId() {
+  return `d-${Math.random().toString(36).substr(2, 9)}`;
+}
+
 export function DepartmentsTab({ departments, setDepartments, employees }: DepartmentsTabProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
@@ -71,7 +75,7 @@ export function DepartmentsTab({ departments, setDepartments, employees }: Depar
     if (formData.id) {
       setDepartments(departments.map(d => d.id === formData.id ? { ...d, ...formData } as Department : d));
     } else {
-      const newId = `d${crypto.randomUUID()}`;
+      const newId = generateDepartmentId();
       setDepartments([...departments, { ...formData, id: newId } as Department]);
     }
     setIsDialogOpen(false);
