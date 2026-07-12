@@ -1,5 +1,12 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Package, Wrench, AlertTriangle, CheckCircle2 } from "lucide-react";
+import {
+  AssetUtilizationChart,
+  AssetUtilizationLegend,
+  AssetsByCategoryChart,
+  MonthlyGrowthChart,
+} from "./components/dashboard-charts";
+import { RecentActivity } from "./components/recent-activity";
 
 export default function DashboardPage() {
   return (
@@ -11,6 +18,7 @@ export default function DashboardPage() {
         </p>
       </div>
 
+      {/* ── KPI Cards (unchanged) ── */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -61,25 +69,50 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
       </div>
-      
-      {/* Placeholder for future charts/tables */}
+
+      {/* ── Row 1: Asset Utilization Bar + Recent Activity ── */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
         <Card className="col-span-4">
           <CardHeader>
-            <CardTitle>Asset Utilization Overview</CardTitle>
-            <CardDescription>Chart placeholder coming soon...</CardDescription>
+            <CardTitle>Asset Utilization by Department</CardTitle>
+            <CardDescription>Utilized vs. idle assets across all departments</CardDescription>
           </CardHeader>
-          <CardContent className="h-[300px] flex items-center justify-center border-dashed border-2 m-6 rounded-md border-muted">
-            <span className="text-muted-foreground">Chart Area</span>
+          <CardContent className="px-4 pb-4">
+            <AssetUtilizationChart />
+            <AssetUtilizationLegend />
           </CardContent>
         </Card>
+
         <Card className="col-span-3">
           <CardHeader>
             <CardTitle>Recent Activity</CardTitle>
-            <CardDescription>Latest asset updates and bookings</CardDescription>
+            <CardDescription>Latest asset updates, bookings and alerts</CardDescription>
           </CardHeader>
-          <CardContent className="h-[300px] flex items-center justify-center border-dashed border-2 m-6 rounded-md border-muted">
-            <span className="text-muted-foreground">Activity Feed Area</span>
+          <CardContent className="px-4 pb-4">
+            <RecentActivity />
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* ── Row 2: Pie Chart + Growth Line ── */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+        <Card className="col-span-3">
+          <CardHeader>
+            <CardTitle>Assets by Category</CardTitle>
+            <CardDescription>Distribution across all asset categories</CardDescription>
+          </CardHeader>
+          <CardContent className="px-4 pb-4">
+            <AssetsByCategoryChart />
+          </CardContent>
+        </Card>
+
+        <Card className="col-span-4">
+          <CardHeader>
+            <CardTitle>Monthly Asset Growth</CardTitle>
+            <CardDescription>Total registered assets Jan – Aug 2025</CardDescription>
+          </CardHeader>
+          <CardContent className="px-4 pb-6">
+            <MonthlyGrowthChart />
           </CardContent>
         </Card>
       </div>
