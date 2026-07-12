@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { 
   Package, 
   Plus, 
@@ -75,9 +75,7 @@ import { mockCategories, mockDepartments, mockEmployees, Employee, Department, A
 import { Asset, AssetStatus, getStoredAssets, saveAssets, generateNextAssetTag } from "@/lib/data/assetStore";
 
 export default function AssetsPage() {
-  // Asset state
-  const [assets, setAssets] = useState<Asset[]>([]);
-  
+
   // Dialog & Sheet controllers
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
@@ -103,7 +101,7 @@ export default function AssetsPage() {
     departmentId: "none",
     location: "HQ - 4th Floor",
     description: "",
-    customFields: {} as Record<string, any>
+    customFields: {} as Record<string, string | number>
   });
 
   // Predefined locations list
@@ -116,10 +114,8 @@ export default function AssetsPage() {
     "Remote"
   ];
 
-  // Load assets on mount
-  useEffect(() => {
-    setAssets(getStoredAssets());
-  }, []);
+  // Load assets on mount — use lazy initializer to avoid setState-in-effect lint rule
+  const [assets, setAssets] = useState<Asset[]>(() => getStoredAssets());
 
   // Sync state helpers
   const handleSaveAssets = (newAssets: Asset[]) => {
@@ -161,9 +157,10 @@ export default function AssetsPage() {
   };
 
   // Form helpers
-  const handleCategoryChange = (val: string) => {
+  const handleCategoryChange = (val: string | null) => {
+    if (!val) return;
     const selectedCat = mockCategories.find(c => c.id === val);
-    const defaults: Record<string, any> = {};
+    const defaults: Record<string, string | number> = {};
     if (selectedCat) {
       selectedCat.customFields.forEach(field => {
         defaults[field.name] = field.type === "number" ? "" : "";
@@ -305,7 +302,7 @@ export default function AssetsPage() {
             <DialogHeader>
               <DialogTitle>Register Asset</DialogTitle>
               <DialogDescription>
-                Add a new asset to your organization's directory. It will start with status "Available".
+                Add a new asset to your organization&apos;s directory. It will start with status &quot;Available&quot;.
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={handleRegister} className="space-y-4 py-2">

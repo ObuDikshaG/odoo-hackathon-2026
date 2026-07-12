@@ -60,7 +60,7 @@ export function EmployeesTab({ employees, setEmployees, departments }: Employees
     if (formData.id) {
       setEmployees(employees.map(e => e.id === formData.id ? { ...e, ...formData } as Employee : e));
     } else {
-      const newId = `e${Date.now()}`;
+      const newId = `e${crypto.randomUUID()}`;
       setEmployees([...employees, { ...formData, id: newId, role: "Employee" } as Employee]);
     }
     setIsDialogOpen(false);

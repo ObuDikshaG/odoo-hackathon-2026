@@ -71,7 +71,7 @@ export function DepartmentsTab({ departments, setDepartments, employees }: Depar
     if (formData.id) {
       setDepartments(departments.map(d => d.id === formData.id ? { ...d, ...formData } as Department : d));
     } else {
-      const newId = `d${Date.now()}`;
+      const newId = `d${crypto.randomUUID()}`;
       setDepartments([...departments, { ...formData, id: newId } as Department]);
     }
     setIsDialogOpen(false);

@@ -57,7 +57,7 @@ export function CategoriesTab({ categories, setCategories }: CategoriesTabProps)
     if (formData.id) {
       setCategories(categories.map(c => c.id === formData.id ? { ...c, ...formData } as AssetCategory : c));
     } else {
-      const newId = `c${Date.now()}`;
+      const newId = `c${crypto.randomUUID()}`;
       setCategories([...categories, { ...formData, id: newId } as AssetCategory]);
     }
     setIsDialogOpen(false);
@@ -120,8 +120,8 @@ export function CategoriesTab({ categories, setCategories }: CategoriesTabProps)
     .filter((cat) => cat.name.toLowerCase().includes(searchQuery.toLowerCase()))
     .sort((a, b) => {
       if (!sortField) return 0;
-      let valA: any = a[sortField];
-      let valB: any = b[sortField];
+      let valA: string | number = a[sortField] as string | number;
+      let valB: string | number = b[sortField] as string | number;
 
       if (sortField === "customFields") {
         valA = a.customFields.length;

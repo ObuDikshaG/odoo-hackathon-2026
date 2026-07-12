@@ -9,7 +9,7 @@ export interface Asset {
   location: string;
   description: string;
   status: AssetStatus;
-  customFields: Record<string, any>;
+  customFields: Record<string, string | number>;
   createdAt: string;
 }
 
