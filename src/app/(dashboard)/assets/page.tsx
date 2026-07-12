@@ -12,12 +12,10 @@ import {
   Trash2, 
   User, 
   MapPin, 
-  Calendar, 
-  DollarSign, 
   Wrench, 
-  Activity,
-  X
+  Activity
 } from "lucide-react";
+
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -65,13 +63,10 @@ import {
 } from "@/components/ui/alert-dialog";
 import {
   Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetDescription
+  SheetContent
 } from "@/components/ui/sheet";
 
-import { mockCategories, mockDepartments, mockEmployees, Employee, Department, AssetCategory } from "@/lib/data/mock";
+import { mockCategories, mockDepartments } from "@/lib/data/mock";
 import { Asset, AssetStatus, getStoredAssets, saveAssets, generateNextAssetTag } from "@/lib/data/assetStore";
 
 export default function AssetsPage() {
@@ -149,11 +144,6 @@ export default function AssetsPage() {
   const getDepartmentName = (id: string | null) => {
     if (!id || id === "none") return "Unassigned";
     return mockDepartments.find(d => d.id === id)?.name || "Unknown";
-  };
-
-  const getEmployeeName = (id: string | null) => {
-    if (!id) return "-";
-    return mockEmployees.find(e => e.id === id)?.name || "Unknown";
   };
 
   // Form helpers
@@ -349,7 +339,7 @@ export default function AssetsPage() {
 
               <div className="grid gap-2">
                 <Label>Department Assignment</Label>
-                <Select value={formData.departmentId} onValueChange={(val) => setFormData({ ...formData, departmentId: val })}>
+                <Select value={formData.departmentId} onValueChange={(val) => setFormData({ ...formData, departmentId: val ?? "none" })}>
                   <SelectTrigger className="w-full h-9">
                     <SelectValue placeholder="Select Department" />
                   </SelectTrigger>
@@ -364,7 +354,7 @@ export default function AssetsPage() {
 
               <div className="grid gap-2">
                 <Label>Location</Label>
-                <Select value={formData.location} onValueChange={(val) => setFormData({ ...formData, location: val })}>
+                <Select value={formData.location} onValueChange={(val) => setFormData({ ...formData, location: val ?? formData.location })}>
                   <SelectTrigger className="w-full h-9">
                     <SelectValue placeholder="Select Location" />
                   </SelectTrigger>
@@ -446,7 +436,7 @@ export default function AssetsPage() {
             />
           </div>
           <div>
-            <Select value={filterCategory} onValueChange={setFilterCategory}>
+            <Select value={filterCategory} onValueChange={(val) => setFilterCategory(val ?? "all")}>
               <SelectTrigger className="w-full h-9">
                 <SelectValue placeholder="Category: All" />
               </SelectTrigger>
@@ -459,7 +449,7 @@ export default function AssetsPage() {
             </Select>
           </div>
           <div>
-            <Select value={filterStatus} onValueChange={setFilterStatus}>
+            <Select value={filterStatus} onValueChange={(val) => setFilterStatus(val ?? "all")}>
               <SelectTrigger className="w-full h-9">
                 <SelectValue placeholder="Status: All" />
               </SelectTrigger>
@@ -474,7 +464,7 @@ export default function AssetsPage() {
             </Select>
           </div>
           <div>
-            <Select value={filterDepartment} onValueChange={setFilterDepartment}>
+            <Select value={filterDepartment} onValueChange={(val) => setFilterDepartment(val ?? "all")}>
               <SelectTrigger className="w-full h-9">
                 <SelectValue placeholder="Department: All" />
               </SelectTrigger>
@@ -487,7 +477,7 @@ export default function AssetsPage() {
             </Select>
           </div>
           <div>
-            <Select value={filterLocation} onValueChange={setFilterLocation}>
+            <Select value={filterLocation} onValueChange={(val) => setFilterLocation(val ?? "all")}>
               <SelectTrigger className="w-full h-9">
                 <SelectValue placeholder="Location: All" />
               </SelectTrigger>
