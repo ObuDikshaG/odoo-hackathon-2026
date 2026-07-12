@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LayoutDashboard, Package, CalendarDays, Wrench, FileCheck, FileText, Bell, Building2 } from "lucide-react";
+import { LayoutDashboard, Package, CalendarDays, Wrench, FileCheck, BarChart3, Bell, Building2 } from "lucide-react";
 
 export function Sidebar() {
   const routes = [
@@ -9,7 +9,7 @@ export function Sidebar() {
     { name: "Booking", icon: CalendarDays, href: "/booking" },
     { name: "Maintenance", icon: Wrench, href: "/maintenance" },
     { name: "Audit", icon: FileCheck, href: "/audit" },
-    { name: "Reports", icon: FileText, href: "/reports" },
+    { name: "Reports & Analytics", icon: BarChart3, href: "/reports" },
     { name: "Notifications", icon: Bell, href: "/notifications" },
   ];
 

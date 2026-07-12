@@ -19,6 +19,10 @@ interface EmployeesTabProps {
   departments: Department[];
 }
 
+function generateEmployeeId() {
+  return `e-${Math.random().toString(36).substr(2, 9)}`;
+}
+
 export function EmployeesTab({ employees, setEmployees, departments }: EmployeesTabProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
@@ -60,7 +64,7 @@ export function EmployeesTab({ employees, setEmployees, departments }: Employees
     if (formData.id) {
       setEmployees(employees.map(e => e.id === formData.id ? { ...e, ...formData } as Employee : e));
     } else {
-      const newId = `e${Date.now()}`;
+      const newId = generateEmployeeId();
       setEmployees([...employees, { ...formData, id: newId, role: "Employee" } as Employee]);
     }
     setIsDialogOpen(false);
